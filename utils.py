@@ -24,3 +24,5 @@ sub_options = {
     'Uvas frescas (Exp)': 'ExpUva',
     'Suco de uva (Exp)': 'ExpSuco'
 }
+
+columns = ['category_uid', 'subcategory', 'control', 'created_at', 'updated_at', 'year']

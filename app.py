@@ -1,10 +1,14 @@
 """App beta version"""
+import os
 from datetime import datetime
-
+import pandas as pd
 import requests
 import streamlit as st
+from dotenv import load_dotenv
 
-from utils import sub_options, main_options
+from utils import sub_options, main_options, columns
+
+load_dotenv()
 
 # Session management
 if "authenticated" not in st.session_state:
@@ -14,7 +18,7 @@ if "access_token" not in st.session_state:
 if "refresh_token" not in st.session_state:
     st.session_state.refresh_token = None
 
-API_URL = 'http://127.0.0.1:8000/v1/api{}'
+API_URL = f'{os.getenv('API_URL')}v1/api'
 bearer = {'Authorization': f'Bearer {st.session_state.access_token}'}
 
 st.set_page_config(page_title='TC Embrapa APP - β Version')
@@ -33,7 +37,7 @@ def auth_login(email: str, password: str):
     :return:
     """
     payload = {'email': email, 'password': password}
-    return requests.post(API_URL.format('/auth/login'), json=payload, timeout=60).json()
+    return requests.post(f'{API_URL}/auth/login', json=payload, timeout=60).json()
 
 
 def auth_register(first_name: str, last_name: str, email: str, username: str, password: str):
@@ -48,12 +52,12 @@ def auth_register(first_name: str, last_name: str, email: str, username: str, pa
     """
     payload = {'first_name': first_name, 'last_name': last_name,
                'email': email, 'username': username, 'password': password}
-    return requests.post(API_URL.format('/auth/signup'), json=payload, timeout=60).json()
+    return requests.post(f'{API_URL}/auth/signup', json=payload, timeout=60).json()
 
 
 def about_me():
     """Method to get all user data"""
-    return requests.get(API_URL.format('/auth/me'), headers=bearer, timeout=60).json()
+    return requests.get(f'{API_URL}/auth/me', headers=bearer, timeout=60).json()
 
 
 def save_viticulture(category: str, mode: str):
@@ -63,7 +67,7 @@ def save_viticulture(category: str, mode: str):
     :param mode: mode as str param
     :return:
     """
-    url = API_URL.format(f'/viticulture/external_content/{category}?mode={mode}')
+    url = f'{API_URL}/viticulture/external_content/{category}?mode={mode}'
     return requests.post(url, headers=bearer, timeout=60).json()
 
 
@@ -74,7 +78,7 @@ def search_subcategories(subcategory: str, year: int):
     :param year: year as int param
     :return:
     """
-    url = API_URL.format(f'/viticulture/subcategory/{subcategory}/{year}')
+    url = f'{API_URL}/viticulture/subcategory/{subcategory}/{year}'
     return requests.get(url, headers=bearer, timeout=60).json()
 
 
@@ -152,11 +156,12 @@ def page_content():
         submit = st.form_submit_button(label='Buscar', use_container_width=True)
         if submit:
             response = search_subcategories(sub_options[subcategory], year)
-            if response.get('detail'):
-                st.toast(response.get('detail'), icon='❗')
-            else:
+            if isinstance(response, list):
                 with st.container():
-                    st.dataframe(response)
+                    df = pd.DataFrame(response).drop(columns=columns).dropna(axis=1, how='all')
+                    st.dataframe(df)
+            else:
+                st.toast(response.get('detail'), icon='❗')
 
 
 # Redirecting based by authentication
