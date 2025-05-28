@@ -123,7 +123,7 @@ def page_content():
     """Method responsible to render the protected page"""
     with st.sidebar:
         response = about_me()
-        st.markdown(f'Olá, **{response.get('first_name')} {response.get('last_name')}**')
+        st.markdown('Olá, **{} {}**'.format(response.get('first_name'), response.get('last_name')))
 
         if st.button("Logout"):
             st.session_state.authenticated = False
