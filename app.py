@@ -18,7 +18,8 @@ if "access_token" not in st.session_state:
 if "refresh_token" not in st.session_state:
     st.session_state.refresh_token = None
 
-API_URL = f'{os.getenv('API_URL')}v1/api'
+BACKEND_API = os.getenv('API_URL')
+API_URL = f'{BACKEND_API}v1/api'
 bearer = {'Authorization': f'Bearer {st.session_state.access_token}'}
 
 st.set_page_config(page_title='TC Embrapa APP - β Version')
