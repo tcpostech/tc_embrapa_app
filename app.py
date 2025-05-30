@@ -20,6 +20,7 @@ if "refresh_token" not in st.session_state:
 
 BACKEND_API = os.getenv('API_URL')
 API_URL = f'{BACKEND_API}v1/api'
+TIMEOUT = 150
 bearer = {'Authorization': f'Bearer {st.session_state.access_token}'}
 
 st.set_page_config(page_title='TC Embrapa APP - β Version')
@@ -38,7 +39,7 @@ def auth_login(email: str, password: str):
     :return:
     """
     payload = {'email': email, 'password': password}
-    return requests.post(f'{API_URL}/auth/login', json=payload, timeout=60).json()
+    return requests.post(f'{API_URL}/auth/login', json=payload, timeout=TIMEOUT).json()
 
 
 def auth_register(first_name: str, last_name: str, email: str, username: str, password: str):
@@ -53,12 +54,12 @@ def auth_register(first_name: str, last_name: str, email: str, username: str, pa
     """
     payload = {'first_name': first_name, 'last_name': last_name,
                'email': email, 'username': username, 'password': password}
-    return requests.post(f'{API_URL}/auth/signup', json=payload, timeout=60).json()
+    return requests.post(f'{API_URL}/auth/signup', json=payload, timeout=TIMEOUT).json()
 
 
 def about_me():
     """Method to get all user data"""
-    return requests.get(f'{API_URL}/auth/me', headers=bearer, timeout=60).json()
+    return requests.get(f'{API_URL}/auth/me', headers=bearer, timeout=TIMEOUT).json()
 
 
 def save_viticulture(category: str, mode: str):
@@ -69,7 +70,7 @@ def save_viticulture(category: str, mode: str):
     :return:
     """
     url = f'{API_URL}/viticulture/external_content/{category}?mode={mode}'
-    return requests.post(url, headers=bearer, timeout=60).json()
+    return requests.post(url, headers=bearer, timeout=TIMEOUT).json()
 
 
 def search_subcategories(subcategory: str, year: int):
@@ -80,7 +81,7 @@ def search_subcategories(subcategory: str, year: int):
     :return:
     """
     url = f'{API_URL}/viticulture/subcategory/{subcategory}/{year}'
-    return requests.get(url, headers=bearer, timeout=60).json()
+    return requests.get(url, headers=bearer, timeout=TIMEOUT).json()
 
 
 def login_page():
