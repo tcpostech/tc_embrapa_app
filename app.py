@@ -161,7 +161,7 @@ def page_content():
             if isinstance(response, list):
                 with st.container():
                     df = pd.DataFrame(response).drop(columns=columns).dropna(axis=1, how='all')
-                    st.dataframe(df)
+                    st.dataframe(df, hide_index=True)
             else:
                 st.toast(response.get('detail'), icon='❗')
 
