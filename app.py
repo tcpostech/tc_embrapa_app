@@ -20,7 +20,7 @@ if "refresh_token" not in st.session_state:
 
 BACKEND_API = os.getenv('API_URL')
 API_URL = f'{BACKEND_API}v1/api'
-TIMEOUT = 150
+TIMEOUT = 2000
 bearer = {'Authorization': f'Bearer {st.session_state.access_token}'}
 
 st.set_page_config(page_title='TC Embrapa APP - β Version')
